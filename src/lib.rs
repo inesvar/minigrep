@@ -3,5 +3,3 @@ mod search;
 
 pub use grep_arg::GrepArgs;
 pub use grep_arg::run;
-
-// TODO: write integration tests

@@ -66,7 +66,6 @@ fn get_arg(args: &[String], index: usize) -> Result<&String, String> {
 
 fn get_help_message(args: &[String]) -> String {
     format!(
-        "Expected at least two arguments (a filename and a string pattern), got : {:?}.",
-        &args[1..]
+        "Expected at least three arguments (1st: ignored, 2nd: query, 3rd: file_path), got : {args:?}."
     )
 }
