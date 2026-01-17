@@ -1,4 +1,5 @@
-use minigrep::{GrepArgs, run};
+use minigrep::GrepArgs;
+use minigrep::run;
 use std::env;
 
 fn main() -> Result<(), String> {
@@ -6,5 +7,5 @@ fn main() -> Result<(), String> {
 
     let grep_args = GrepArgs::build(&args)?;
 
-    run(grep_args)
+    run(&grep_args)
 }
