@@ -10,20 +10,17 @@ pub struct GrepArgs {
 }
 
 pub fn run(args: &GrepArgs) -> Result<(), String> {
-    let text = match fs::read_to_string(&args.file_path) {
-        Ok(result) => result,
-        Err(error) => return Err(error.to_string()),
-    };
+    let contents = fs::read_to_string(&args.file_path).map_err(|err| err.to_string())?;
     // println!(
     //     "{} first line: {:?}",
     //     args.file_path,
-    //     text.lines().next().unwrap_or_default()
+    //     contents.lines().next().unwrap_or_default()
     // );
 
     let results = if args.ignore_case {
-        search::search_case_insensitive(&args.query, &text)
+        search::search_case_insensitive(&args.query, &contents)
     } else {
-        search::search(&args.query, &text)
+        search::search(&args.query, &contents)
     };
     for line in results {
         println!("{line}");
@@ -73,5 +70,3 @@ fn get_help_message(args: &[String]) -> String {
         &args[1..]
     )
 }
-
-// TODO: write unit tests
