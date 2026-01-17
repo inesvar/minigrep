@@ -1,5 +1,4 @@
 use minigrep::search;
-use minigrep::search_case_insensitive;
 use std::env;
 use std::fs;
 
@@ -23,9 +22,9 @@ fn run(args: GrepArgs) -> Result<(), String> {
     );
 
     let results = if args.ignore_case {
-        search_case_insensitive(&args.query, &text)
+        search::search_case_insensitive(&args.query, &text)
     } else {
-        search(&args.query, &text)
+        search::search(&args.query, &text)
     };
     for line in results {
         println!("\t{line}");
