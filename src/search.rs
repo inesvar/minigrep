@@ -1,21 +1,21 @@
 pub(super) fn search<'a>(query: &str, contents: &'a str) -> Vec<&'a str> {
-    let mut matched_lines = Vec::new();
-    for line in contents.lines() {
-        if line.contains(query) {
-            matched_lines.push(line);
-        }
-    }
-    matched_lines
+    filter_lines(query, contents, |line, query| line.contains(query))
 }
 
 pub(super) fn search_case_insensitive<'a>(query: &str, contents: &'a str) -> Vec<&'a str> {
-    let mut matched_lines = Vec::new();
-    for line in contents.lines() {
-        if line.to_lowercase().contains(&query.to_lowercase()) {
-            matched_lines.push(line);
-        }
-    }
-    matched_lines
+    filter_lines(&query.to_lowercase(), contents, |line, query| {
+        line.to_lowercase().contains(query)
+    })
+}
+
+fn filter_lines<'a, F>(query: &str, contents: &'a str, filter: F) -> Vec<&'a str>
+where
+    F: Fn(&str, &str) -> bool,
+{
+    contents
+        .lines()
+        .filter(|line| filter(line, query))
+        .collect()
 }
 
 #[cfg(test)]
@@ -29,7 +29,7 @@ safe, fast, productive.
 Pick three.";
 
     #[rstest]
-    #[case::one_result_duct("duct", vec!["safe, fast, productive."])]
+    #[case::one_result_productive("productive", vec!["safe, fast, productive."])]
     #[case::one_result_three("three", vec!["Pick three."])]
     #[case::two_results_u("u", vec!["Rust:", "safe, fast, productive."])]
     #[case::no_result_rust("rust", vec![])]
