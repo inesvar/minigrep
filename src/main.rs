@@ -1,3 +1,4 @@
+use minigrep::search;
 use std::env;
 use std::fs;
 
@@ -19,6 +20,10 @@ fn run(args: GrepArgs) -> Result<(), String> {
         args.file_path,
         text.lines().next().unwrap_or_default()
     );
+
+    for line in search(&args.query, &text) {
+        println!("{line}");
+    }
 
     Ok(())
 }
