@@ -21,46 +21,26 @@ pub(super) fn search_case_insensitive<'a>(query: &str, contents: &'a str) -> Vec
 #[cfg(test)]
 mod tests {
     use super::*;
+    use rstest::rstest;
 
     const CONTENTS: &str = "\
 Rust:
 safe, fast, productive.
 Pick three.";
 
-    #[test]
-    fn search_has_one_result() {
-        let query = "duct";
-        assert_eq!(vec!["safe, fast, productive."], search(query, CONTENTS));
+    #[rstest]
+    #[case::one_result_duct("duct", vec!["safe, fast, productive."])]
+    #[case::one_result_three("three", vec!["Pick three."])]
+    #[case::two_results_u("u", vec!["Rust:", "safe, fast, productive."])]
+    #[case::no_result_rust("rust", vec![])]
+    fn search_is_correct(#[case] query: &str, #[case] result: Vec<&str>) {
+        assert_eq!(result, search(query, CONTENTS));
     }
 
-    #[test]
-    fn search_has_another_result() {
-        let query = "Rust";
-
-        assert_eq!(vec!["Rust:"], search(query, CONTENTS));
-    }
-
-    #[test]
-    fn search_has_two_results() {
-        let query = "u";
-
-        assert_eq!(
-            vec!["Rust:", "safe, fast, productive."],
-            search(query, CONTENTS)
-        );
-    }
-
-    #[test]
-    fn search_case_insensitive_has_one_result() {
-        let query = "rust";
-
-        assert_eq!(vec!["Rust:"], search_case_insensitive(query, CONTENTS));
-    }
-
-    #[test]
-    fn search_case_sensitive_has_no_result() {
-        let query = "rust";
-
-        assert_eq!(Vec::<&str>::new(), search(query, CONTENTS));
+    #[rstest]
+    #[case::one_result_rust("rust", vec!["Rust:"])]
+    #[case::one_result_rust("pick", vec!["Pick three."])]
+    fn search_case_insensitive_is_correct(#[case] query: &str, #[case] result: Vec<&str>) {
+        assert_eq!(result, search_case_insensitive(query, CONTENTS));
     }
 }
