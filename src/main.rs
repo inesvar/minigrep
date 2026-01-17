@@ -6,13 +6,17 @@ fn main() -> Result<(), String> {
 
     let grep_args = GrepArgs::build(&args)?;
 
-    let text = match fs::read_to_string(&grep_args.file_path) {
+    run(grep_args)
+}
+
+fn run(args: GrepArgs) -> Result<(), String> {
+    let text = match fs::read_to_string(&args.file_path) {
         Ok(result) => result,
         Err(error) => return Err(error.to_string()),
     };
     println!(
         "{} first line: {:?}",
-        grep_args.file_path,
+        args.file_path,
         text.lines().next().unwrap_or_default()
     );
 
