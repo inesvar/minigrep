@@ -4,7 +4,7 @@ use std::fs;
 fn main() -> Result<(), String> {
     let args: Vec<String> = env::args().collect();
 
-    let grep_args = parse_arguments(&args)?;
+    let grep_args = GrepArgs::build(&args)?;
 
     let text = match fs::read_to_string(&grep_args.file_path) {
         Ok(result) => result,
@@ -24,15 +24,17 @@ struct GrepArgs {
     file_path: String,
 }
 
-fn parse_arguments(args: &[String]) -> Result<GrepArgs, String> {
-    let Some([_, query, file_path]) = args.first_chunk::<3>() else {
-        return Err(get_help_message(args));
-    };
-    println!("Searching '{query}' in '{file_path}'.");
-    Ok(GrepArgs {
-        query: query.to_string(),
-        file_path: file_path.to_string(),
-    })
+impl GrepArgs {
+    fn build(args: &[String]) -> Result<Self, String> {
+        let Some([_, query, file_path]) = args.first_chunk::<3>() else {
+            return Err(get_help_message(args));
+        };
+        println!("Searching '{query}' in '{file_path}'.");
+        Ok(Self {
+            query: query.to_string(),
+            file_path: file_path.to_string(),
+        })
+    }
 }
 
 fn get_help_message(args: &[String]) -> String {
