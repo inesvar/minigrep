@@ -4,26 +4,35 @@ use std::fs;
 fn main() -> Result<(), String> {
     let args: Vec<String> = env::args().collect();
 
-    let (pattern, filename) = parse_arguments(&args)?;
+    let grep_args = parse_arguments(&args)?;
 
-    let text = match fs::read_to_string(filename) {
+    let text = match fs::read_to_string(&grep_args.file_path) {
         Ok(result) => result,
         Err(error) => return Err(error.to_string()),
     };
     println!(
-        "{filename} first line: {:?}",
+        "{} first line: {:?}",
+        grep_args.file_path,
         text.lines().next().unwrap_or_default()
     );
 
     Ok(())
 }
 
-fn parse_arguments(args: &[String]) -> Result<(&str, &str), String> {
-    let Some([_, pattern, filename]) = args.first_chunk::<3>() else {
+struct GrepArgs {
+    query: String,
+    file_path: String,
+}
+
+fn parse_arguments(args: &[String]) -> Result<GrepArgs, String> {
+    let Some([_, query, file_path]) = args.first_chunk::<3>() else {
         return Err(get_help_message(args));
     };
-    println!("Searching '{pattern}' in '{filename}'.");
-    Ok((pattern, filename))
+    println!("Searching '{query}' in '{file_path}'.");
+    Ok(GrepArgs {
+        query: query.to_string(),
+        file_path: file_path.to_string(),
+    })
 }
 
 fn get_help_message(args: &[String]) -> String {
