@@ -18,17 +18,17 @@ pub struct GrepArgs {
 
 /// Prints lines described by the [GrepArgs] `args`.
 pub fn run(args: &GrepArgs) -> Result<(), String> {
-    let contents = fs::read_to_string(&args.file_path).map_err(|err| err.to_string())?;
+    let content = fs::read_to_string(&args.file_path).map_err(|err| err.to_string())?;
     // println!(
     //     "{} first line: {:?}",
     //     args.file_path,
-    //     contents.lines().next().unwrap_or_default()
+    //     content.lines().next().unwrap_or_default()
     // );
 
     let results = if args.ignore_case {
-        search::search_case_insensitive(&args.query, &contents)
+        search::search_case_insensitive(&args.query, &content)
     } else {
-        search::search(&args.query, &contents)
+        search::search(&args.query, &content)
     };
     for line in results {
         println!("{line}");

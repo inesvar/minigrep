@@ -1,21 +1,18 @@
-pub(super) fn search<'a>(query: &str, contents: &'a str) -> Vec<&'a str> {
-    filter_lines(query, contents, |line, query| line.contains(query))
+pub(super) fn search<'a>(query: &str, content: &'a str) -> Vec<&'a str> {
+    filter_lines(content, |line| line.contains(query))
 }
 
-pub(super) fn search_case_insensitive<'a>(query: &str, contents: &'a str) -> Vec<&'a str> {
-    filter_lines(&query.to_lowercase(), contents, |line, query| {
-        line.to_lowercase().contains(query)
+pub(super) fn search_case_insensitive<'a>(query: &str, content: &'a str) -> Vec<&'a str> {
+    filter_lines(content, |line| {
+        line.to_lowercase().contains(&query.to_lowercase())
     })
 }
 
-fn filter_lines<'a, F>(query: &str, contents: &'a str, filter: F) -> Vec<&'a str>
+fn filter_lines<F>(content: &str, f: F) -> Vec<&str>
 where
-    F: Fn(&str, &str) -> bool,
+    F: Fn(&&str) -> bool,
 {
-    contents
-        .lines()
-        .filter(|line| filter(line, query))
-        .collect()
+    content.lines().filter(f).collect()
 }
 
 #[cfg(test)]
@@ -23,7 +20,7 @@ mod tests {
     use super::*;
     use rstest::rstest;
 
-    const CONTENTS: &str = "\
+    const CONTENT: &str = "\
 Rust:
 safe, fast, productive.
 Pick three.";
@@ -34,13 +31,13 @@ Pick three.";
     #[case::two_results_u("u", vec!["Rust:", "safe, fast, productive."])]
     #[case::no_result_rust("rust", vec![])]
     fn search_is_correct(#[case] query: &str, #[case] result: Vec<&str>) {
-        assert_eq!(result, search(query, CONTENTS));
+        assert_eq!(result, search(query, CONTENT));
     }
 
     #[rstest]
     #[case::one_result_rust("rust", vec!["Rust:"])]
     #[case::one_result_rust("pick", vec!["Pick three."])]
     fn search_case_insensitive_is_correct(#[case] query: &str, #[case] result: Vec<&str>) {
-        assert_eq!(result, search_case_insensitive(query, CONTENTS));
+        assert_eq!(result, search_case_insensitive(query, CONTENT));
     }
 }
