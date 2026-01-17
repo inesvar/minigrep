@@ -49,6 +49,18 @@ impl GrepArgs {
             ignore_case,
         }
     }
+
+    pub fn file_path(&self) -> &str {
+        &self.file_path
+    }
+
+    pub fn query(&self) -> &str {
+        &self.query
+    }
+
+    pub fn ignore_case(&self) -> bool {
+        self.ignore_case
+    }
 }
 
 fn get_arg(args: &[String], index: usize) -> Result<&String, String> {
