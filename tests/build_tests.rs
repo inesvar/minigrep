@@ -9,7 +9,7 @@ fn build_doesnt_panic_when_not_given_enough_arguments(#[case] args: &[String]) {
     let result = GrepArgs::build(args);
 
     assert!(result.is_err());
-    assert!(result.is_err_and(|err| err.starts_with("Expected at least three arguments")));
+    assert!(result.is_err_and(|err| err.starts_with("Missing arguments")));
 }
 
 #[rstest]
