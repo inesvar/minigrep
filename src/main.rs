@@ -42,17 +42,21 @@ struct GrepArgs {
 
 impl GrepArgs {
     fn build(args: &[String]) -> Result<Self, String> {
-        let Some([_, query, file_path]) = args.first_chunk::<3>() else {
-            return Err(get_help_message(args));
-        };
+        let query = get_arg(args, 1)?;
+        let file_path = get_arg(args, 2)?;
         let ignore_case = env::var("IGNORE_CASE").is_ok();
+
         println!("Searching '{query}' in '{file_path} (ignore case ? {ignore_case:?})'.");
         Ok(Self {
-            query: query.to_string(),
-            file_path: file_path.to_string(),
+            query,
+            file_path,
             ignore_case,
         })
     }
+}
+
+fn get_arg(args: &[String], index: usize) -> Result<String, String> {
+    Ok(args.get(index).ok_or(get_help_message(args))?.clone())
 }
 
 fn get_help_message(args: &[String]) -> String {
