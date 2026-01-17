@@ -1,4 +1,5 @@
 use minigrep::search;
+use minigrep::search_case_insensitive;
 use std::env;
 use std::fs;
 
@@ -21,8 +22,13 @@ fn run(args: GrepArgs) -> Result<(), String> {
         text.lines().next().unwrap_or_default()
     );
 
-    for line in search(&args.query, &text) {
-        println!("{line}");
+    let results = if args.ignore_case {
+        search_case_insensitive(&args.query, &text)
+    } else {
+        search(&args.query, &text)
+    };
+    for line in results {
+        println!("\t{line}");
     }
 
     Ok(())
@@ -31,6 +37,7 @@ fn run(args: GrepArgs) -> Result<(), String> {
 struct GrepArgs {
     query: String,
     file_path: String,
+    ignore_case: bool,
 }
 
 impl GrepArgs {
@@ -38,10 +45,12 @@ impl GrepArgs {
         let Some([_, query, file_path]) = args.first_chunk::<3>() else {
             return Err(get_help_message(args));
         };
-        println!("Searching '{query}' in '{file_path}'.");
+        let ignore_case = env::var("IGNORE_CASE").is_ok();
+        println!("Searching '{query}' in '{file_path} (ignore case ? {ignore_case:?})'.");
         Ok(Self {
             query: query.to_string(),
             file_path: file_path.to_string(),
+            ignore_case,
         })
     }
 }
