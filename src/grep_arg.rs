@@ -25,13 +25,10 @@ pub fn run(args: &GrepArgs) -> Result<(), String> {
     //     content.lines().next().unwrap_or_default()
     // );
 
-    let results = if args.ignore_case {
-        search::search_case_insensitive(&args.query, &content)
+    if args.ignore_case {
+        search::print_matching_lines_case_insensitive(&args.query, &content);
     } else {
-        search::search(&args.query, &content)
-    };
-    for line in results {
-        println!("{line}");
+        search::print_matching_lines(&args.query, &content);
     }
 
     Ok(())
