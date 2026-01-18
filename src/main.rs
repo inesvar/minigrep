@@ -3,9 +3,7 @@ use minigrep::run;
 use std::env;
 
 fn main() -> Result<(), String> {
-    let args: Vec<String> = env::args().collect();
-
-    let grep_args = GrepArgs::build(&args)?;
+    let grep_args = GrepArgs::build(env::args())?;
 
     run(&grep_args)
 }

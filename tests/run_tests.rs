@@ -18,7 +18,7 @@ fn nonexistant_file() {
 #[case::to_poem("to", "poem.txt", false)]
 #[case::to_poem_case_insensitive("to", "poem.txt", true)]
 fn empty_file(#[case] query: &str, #[case] file_path: &str, #[case] ignore_case: bool) {
-    let args = GrepArgs::new(query, file_path, ignore_case);
+    let args = GrepArgs::new_from_str(query, file_path, ignore_case);
     let result = run(&args);
 
     assert!(result.is_ok());
