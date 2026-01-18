@@ -26,9 +26,10 @@ pub fn run(args: &GrepArgs) -> Result<(), String> {
     // );
 
     if args.ignore_case {
-        search::print_matching_lines_case_insensitive(&args.query, &content);
+        search::matching_lines_case_insensitive(&args.query, &content)
+            .for_each(|line| println!("{line}"));
     } else {
-        search::print_matching_lines(&args.query, &content);
+        search::matching_lines(&args.query, &content).for_each(|line| println!("{line}"));
     }
 
     Ok(())

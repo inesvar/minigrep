@@ -6,7 +6,7 @@ use std::path::PathBuf;
 use std::process::Command;
 
 #[test]
-fn nonexistant_file() {
+fn nonexisting_file() {
     let result = run(&GrepArgs::default());
 
     assert!(result.is_err());
@@ -17,7 +17,7 @@ fn nonexistant_file() {
 #[case::to_empty("to", "empty.txt", false)]
 #[case::to_poem("to", "poem.txt", false)]
 #[case::to_poem_case_insensitive("to", "poem.txt", true)]
-fn empty_file(#[case] query: &str, #[case] file_path: &str, #[case] ignore_case: bool) {
+fn existing_file(#[case] query: &str, #[case] file_path: &str, #[case] ignore_case: bool) {
     let args = GrepArgs::new_from_str(query, file_path, ignore_case);
     let result = run(&args);
 
